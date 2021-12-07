@@ -20,6 +20,7 @@ class elo_match_handler():
         self.__set_expected_outcomes()
         self.__set_outcome()
         self.__update_elo_scores()
+        self.__calculate_both_expected_error()
     
     @staticmethod
     def get_expected_outcome(RA, RB, f_factor):
@@ -65,11 +66,22 @@ class elo_match_handler():
         else:
             self.team1_elo = self.team1_elo + (self.k_value * (0.5 - self.exp_outcome_team1))
             self.team2_elo = self.team2_elo + (self.k_value * (0.5 - self.exp_outcome_team2))
-            
+    
+    @staticmethod    
+    def calculate_expected_error(expected_outcome: float, actual_outcome: float):
+        exp_error = abs(actual_outcome - expected_outcome)
+        return exp_error
+    
+    def __calculate_both_expected_error(self):
+        self.exp_error_a = self.calculate_expected_error(self.exp_outcome_team1, self.outcome_team1)
+        self.exp_error_b = self.calculate_expected_error(self.exp_outcome_team2, self.outcome_team2)
     
     def get_both_expected_outcomes(self):
         return self.exp_outcome_team1, self.exp_outcome_team2
     
+    def get_both_exp_error(self):
+        return self.exp_error_a, self.exp_error_b
+
     def get_updated_scores(self):
         """Returns the post-game ELO score for each of the two teams
 
